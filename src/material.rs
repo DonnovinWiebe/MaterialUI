@@ -1,7 +1,6 @@
 use std::cmp::PartialEq;
 use iced::{Color, Theme};
 use iced::theme::Palette;
-use plotters::style::RGBAColor;
 
 /// Allows Widgets to be created with a full material style in a single parameter instead of several parameters.
 #[derive(Debug, Clone, Copy, PartialEq)]
