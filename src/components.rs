@@ -5,10 +5,21 @@ use iced::widget::{column, row};
 use iced::widget::button;
 use iced::widget::text_editor::{Content, Action};
 use iced_font_awesome::fa_icon_solid as icon;
-use crate::container::app::{App, Pages};
-use crate::container::signal::Signal;
-use crate::pages::help_page::help_button;
-use crate::ui::material::{Depths, MaterialColors, MaterialStyle, Materials};
+
+use crate::material::{Depths, MaterialColors, MaterialStyle, MaterialThemes, Materials};
+
+// traits
+/// Defines where a theme can come from.
+pub trait ThemeProvider {
+    fn material_theme(&self) -> MaterialThemes;
+}
+
+/// Defines where a pages can come from.
+pub trait PageProvider {
+    fn page_name(&self) -> &str;
+    fn page_icon(&self) -> &str;
+    fn page_accent(&self) -> MaterialColors;
+}
 
 // modes
 /// The different modes that a date picker can be in.
@@ -266,7 +277,7 @@ pub enum Directions {
 // standard styles
 /// Returns a standard rounded background style.
 fn panel_container_style(
-    app: &App,
+    app: &impl ThemeProvider,
     material_style: MaterialStyle,
 ) -> impl Fn(&Theme) -> container::Style {
     move |_| container::Style {
@@ -275,7 +286,7 @@ fn panel_container_style(
                 material_style.material,
                 material_style.depth,
                 false,
-                app.theme_selection,
+                app.material_theme(),
             ).into()
         ),
         
@@ -290,7 +301,7 @@ fn panel_container_style(
                     material_style.material,
                     material_style.depth,
                     true,
-                    app.theme_selection,
+                    app.material_theme(),
                 )
             }
             else { Color::TRANSPARENT },
@@ -303,7 +314,7 @@ fn panel_container_style(
                 material_style.material,
                 material_style.depth,
                 false,
-                app.theme_selection,
+                app.material_theme(),
             )
         ),
         
@@ -313,7 +324,7 @@ fn panel_container_style(
 
 /// Returns standard button style.
 fn panel_button_style(
-    app: &App,
+    app: &impl ThemeProvider,
     material_style: MaterialStyle,
 ) -> impl Fn(&Theme, button::Status) -> button::Style {
     move |_, status| button::Style {
@@ -323,7 +334,7 @@ fn panel_button_style(
                     material_style.material,
                     material_style.depth,
                     false,
-                    app.theme_selection,
+                    app.material_theme(),
                 ).into()
             }
             
@@ -332,7 +343,7 @@ fn panel_button_style(
                     material_style.material,
                     material_style.depth,
                     true,
-                    app.theme_selection,
+                    app.material_theme(),
                 ).into()
             }
         }),
@@ -346,7 +357,7 @@ fn panel_button_style(
                         material_style.material,
                         material_style.depth,
                         false,
-                        app.theme_selection,
+                        app.material_theme(),
                     )
                 }
                 
@@ -355,7 +366,7 @@ fn panel_button_style(
                         material_style.material,
                         material_style.depth,
                         true,
-                        app.theme_selection,
+                        app.material_theme(),
                     )
                 }
             }),
@@ -366,7 +377,7 @@ fn panel_button_style(
                     material_style.material,
                     material_style.depth,
                     true,
-                    app.theme_selection,
+                    app.material_theme(),
                 )
             }
             else { Color::TRANSPARENT },
@@ -379,7 +390,7 @@ fn panel_button_style(
                 material_style.material,
                 material_style.depth,
                 false,
-                app.theme_selection,
+                app.material_theme(),
             )
         },
         
@@ -389,7 +400,7 @@ fn panel_button_style(
 
 /// Returns a standard text input style.
 fn text_input_style(
-    app: &App,
+    app: &impl ThemeProvider,
     material_style: MaterialStyle,
 ) -> impl Fn(&Theme, text_input::Status) -> text_input::Style {
     move |_, status| text_input::Style {
@@ -399,7 +410,7 @@ fn text_input_style(
                     material_style.material,
                     material_style.depth,
                     false,
-                    app.theme_selection,
+                    app.material_theme(),
                 ).into()
             }
             
@@ -408,7 +419,7 @@ fn text_input_style(
                     material_style.material,
                     material_style.depth,
                     true,
-                    app.theme_selection,
+                    app.material_theme(),
                 ).into()
             }
         },
@@ -422,7 +433,7 @@ fn text_input_style(
                         material_style.material,
                         material_style.depth,
                         false,
-                        app.theme_selection,
+                        app.material_theme(),
                     )
                 }
                 
@@ -431,7 +442,7 @@ fn text_input_style(
                         material_style.material,
                         material_style.depth,
                         true,
-                        app.theme_selection,
+                        app.material_theme(),
                     )
                 }
             }),
@@ -440,20 +451,20 @@ fn text_input_style(
             material_style.material,
             material_style.depth,
             false,
-            app.theme_selection,
+            app.material_theme(),
         ),
         
-        placeholder: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, true, app.theme_selection),
+        placeholder: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, true, app.material_theme()),
         
-        value: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, false, app.theme_selection),
+        value: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, false, app.material_theme()),
         
-        selection: MaterialColors::accent(app.theme_selection).materialized(Materials::Plastic, Depths::Flat, false, app.theme_selection),
+        selection: MaterialColors::accent(app.material_theme()).materialized(Materials::Plastic, Depths::Flat, false, app.material_theme()),
     }
 }
 
 /// Returns a standard text editor style.
 fn text_editor_style(
-    app: &App,
+    app: &impl ThemeProvider,
     material_style: MaterialStyle,
 ) -> impl Fn(&Theme, text_editor::Status) -> text_editor::Style {
     move |_, status| text_editor::Style {
@@ -463,7 +474,7 @@ fn text_editor_style(
                     material_style.material,
                     material_style.depth,
                     false,
-                    app.theme_selection,
+                    app.material_theme(),
                 ).into()
             }
             
@@ -472,7 +483,7 @@ fn text_editor_style(
                     material_style.material,
                     material_style.depth,
                     true,
-                    app.theme_selection,
+                    app.material_theme(),
                 ).into()
             }
         },
@@ -486,7 +497,7 @@ fn text_editor_style(
                         material_style.material,
                         material_style.depth,
                         false,
-                        app.theme_selection,
+                        app.material_theme(),
                     )
                 }
                 
@@ -495,16 +506,16 @@ fn text_editor_style(
                         material_style.material,
                         material_style.depth,
                         true,
-                        app.theme_selection,
+                        app.material_theme(),
                     )
                 }
             }),
         
-        placeholder: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, true, app.theme_selection),
+        placeholder: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, true, app.material_theme()),
         
-        value: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, false, app.theme_selection),
+        value: MaterialColors::text().materialized(Materials::Plastic, Depths::Flat, false, app.material_theme()),
         
-        selection: MaterialColors::accent(app.theme_selection).materialized(Materials::Plastic, Depths::Flat, false, app.theme_selection),
+        selection: MaterialColors::accent(app.material_theme()).materialized(Materials::Plastic, Depths::Flat, false, app.material_theme()),
     }
 }
 
@@ -516,7 +527,7 @@ fn text_editor_style(
 /// In a layout such as row![spacer(Fill), content, spacer(Fill)], each spacer will take 1/3 of the available space,
 /// even if the content is set to be larger than its 1/3 slice, shrinking the container.
 #[must_use]
-pub fn spacer<'a>(
+pub fn spacer<'a, Signal: Clone + 'a>(
     orientation: Orientations,
     size: Spacing,
 ) -> Element<'a, Signal> {
@@ -538,7 +549,7 @@ pub fn spacer<'a>(
 
 /// Adds padding around a widget.
 #[must_use]
-pub fn pad<'a>(
+pub fn pad<'a, Signal: Clone + 'a>(
     padding: PaddingSizes,
     content: Element<'a, Signal>,
 ) -> Element<'a, Signal> {
@@ -549,8 +560,8 @@ pub fn pad<'a>(
 
 /// A standard text widget.
 #[must_use]
-pub fn ui_string<'a>(
-    app: &'a App,
+pub fn ui_string<'a, Signal: Clone + 'a>(
+    app: &'a impl ThemeProvider,
     text: impl Into<String>,
     size: TextSizes,
     color: MaterialColors,
@@ -558,14 +569,14 @@ pub fn ui_string<'a>(
     Text::new(text.into())
         .size(size.size())
         .style(move |_theme| {
-            text::Style { color: Some(color.materialized(Materials::Plastic, Depths::Flat, false, app.theme_selection)) }
+            text::Style { color: Some(color.materialized(Materials::Plastic, Depths::Flat, false, app.material_theme())) }
         }).into()
 }
 
 /// A standard box with rounded corners.
 #[must_use]
-pub fn panel<'a>(
-    app: &'a App,
+pub fn panel<'a, Signal: Clone + 'a>(
+    app: &'a impl ThemeProvider,
     material_style: MaterialStyle,
     panel_size: PanelSize,
     internal_padding: PaddingSizes,
@@ -592,8 +603,8 @@ pub fn panel<'a>(
 
 /// A standard button with rounded corners.
 #[must_use]
-pub fn panel_button<'a>(
-    app: &'a App,
+pub fn panel_button<'a, Signal: Clone + 'a>(
+    app: &'a impl ThemeProvider,
     material_style: MaterialStyle,
     shape: ButtonShapes,
     label: impl Into<Element<'a, Signal, Theme, Renderer>>,
@@ -621,8 +632,8 @@ pub fn panel_button<'a>(
 /// A standard text input panel with rounded corners.
 #[must_use]
 #[allow(clippy::too_many_arguments)] // this has a lot of arguments, but they're all necessary
-pub fn panel_text_input<'a>(
-    app: &'a App,
+pub fn panel_text_input<'a, Signal: Clone + 'a>(
+    app: &'a impl ThemeProvider,
     material_style: MaterialStyle,
     width: Widths,
     placeholder: &str,
@@ -659,8 +670,8 @@ pub fn panel_text_input<'a>(
 
 /// A standard text editor panel with rounded corners.
 #[must_use]
-pub fn panel_text_editor<'a>(
-    app: &'a App,
+pub fn panel_text_editor<'a, Signal: Clone + 'a>(
+    app: &'a impl ThemeProvider,
     material_style: MaterialStyle,
     panel_size: PanelSize,
     value: &'a Content,
@@ -688,8 +699,8 @@ pub fn panel_text_editor<'a>(
 // standard app widgets
 /// A header for every page.
 #[must_use]
-pub fn header<'a>(
-    app: &'a App,
+pub fn header<'a, Signal: Clone + 'a>(
+    app: &'a (impl ThemeProvider + PageProvider),
     additional_content: Vec<Element<'a, Signal>>,
 ) -> Element<'a, Signal> {
     let mut positioned_addition_content = additional_content;
@@ -705,16 +716,6 @@ pub fn header<'a>(
             PaddingSizes::Small, {
                 // this holds the title and the additional content all within the main header background bar
                 stack![
-                    // help button
-                    container(
-                        row![
-                            help_button(app),
-                            spacer(Orientations::Horizontal, Spacing::Fill),
-                        ].spacing(0),
-                    )
-                    .height(Length::Fill)
-                    .align_y(Center),
-
                     // additional content
                     container(
                         row(positioned_addition_content)
@@ -736,9 +737,9 @@ pub fn header<'a>(
                                 PaddingSizes::Small, {
                                     row![
                                         spacer(Orientations::Horizontal, Spacing::Medium),
-                                        icon(app.page.icon_name()),
+                                        icon(app.page_icon()),
                                         spacer(Orientations::Horizontal, Spacing::Small),
-                                        ui_string(app, app.page.name(), TextSizes::LargeHeading, MaterialColors::StrongText),
+                                        ui_string(app, app.page_name(), TextSizes::LargeHeading, MaterialColors::StrongText),
                                         spacer(Orientations::Horizontal, Spacing::Medium),
                                     ]
                                     .align_y(Center)
@@ -768,8 +769,9 @@ pub fn header<'a>(
 
 /// The panel used to navigate between pages in the app.
 #[must_use]
-pub fn navigation_panel<'a>(
-    app: &'a App,
+pub fn navigation_panel<'a, Signal: Clone + 'a>(
+    app: &'a impl ThemeProvider,
+    page_pointers: Vec<Element<'a, Signal>>,
 ) -> Element<'a, Signal> {
     pad(PaddingSizes::Small,
         column![
@@ -780,12 +782,7 @@ pub fn navigation_panel<'a>(
                 MaterialStyle { material: Materials::Plastic, color: MaterialColors::Card, depth: Depths::Proud, },
                 PanelSize { width: Widths::Shrink, height: Heights::Fill, },
                 PaddingSizes::Small, {
-                    column![
-                        page_pointer(app, Pages::Transactions),
-                        page_pointer(app, Pages::Trends),
-                        page_pointer(app, Pages::TagRegistry),
-                        page_pointer(app, Pages::Settings),
-                    ]
+                    column(page_pointers)
                     .spacing(Spacing::Small.size())
                     .into()
                 }
@@ -798,11 +795,13 @@ pub fn navigation_panel<'a>(
 
 /// A button that navigates to a specific page.
 #[must_use]
-pub fn page_pointer<'a>(
-    app: &'a App,
-    page: Pages,
+pub fn page_pointer<'a, Signal: Clone + 'a>(
+    app: &'a (impl ThemeProvider + PageProvider),
+    is_selected: bool,
+    on_press: Signal,
+    is_active: bool,
 ) -> Element<'a, Signal> {
-    let color = if app.page == page { MaterialColors::accent(app.theme_selection) }
+    let color = if is_selected { MaterialColors::accent(app.material_theme()) }
     else { MaterialColors::CardContent };
     
     panel_button(
@@ -810,11 +809,11 @@ pub fn page_pointer<'a>(
         MaterialStyle { material: Materials::Plastic, color, depth: Depths::Proud, },
         ButtonShapes::Wide,
         row![
-            icon(page.icon_name()),
-            ui_string(app, page.name(), TextSizes::Interactable, MaterialColors::StrongText),
+            icon(app.page_icon()),
+            ui_string(app, app.page_name(), TextSizes::Interactable, MaterialColors::StrongText),
         ]
         .spacing(Spacing::Large.size()),
-        Signal::ChangePageTo(page),
-        true,
+        on_press,
+        is_active,
     )
 }
