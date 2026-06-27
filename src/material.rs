@@ -1,6 +1,8 @@
 use std::cmp::PartialEq;
 use iced::{Color, Theme};
 use iced::theme::Palette;
+#[cfg(feature = "plotters")]
+use plotters::style::RGBAColor;
 
 /// Allows Widgets to be created with a full material style in a single parameter instead of several parameters.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -114,7 +116,8 @@ impl MaterialColors {
 
     /// Turns a standard `iced::Color` into a `plotters::style::RGBAColor`.
     #[must_use]
-    pub fn color_as_rgb(color: Color) -> RGBAColor {
+    #[cfg(feature = "plotters")]
+    pub fn color_as_plotters_rgba(color: Color) -> RGBAColor {
         #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)] // these will be positive and small
         RGBAColor(
             (color.r * 255.0) as u8,

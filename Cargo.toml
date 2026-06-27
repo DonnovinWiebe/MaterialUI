@@ -3,6 +3,11 @@ name = "materialui"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+plotters = ["dep:plotters"]
+
 [dependencies]
 iced = "0.14.0"
+plotters = { version = "0.3.7", optional = true }
+rand = "0.10.1"
 serde = { version = "1.0.228", features = ["derive"] }
