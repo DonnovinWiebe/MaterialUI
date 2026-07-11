@@ -11,14 +11,16 @@ use crate::material::{Depths, MaterialColors, MaterialStyle, MaterialThemes, Mat
 // traits
 /// Defines where a theme can come from.
 pub trait ThemeProvider {
+    /// Gets the `MaterialThemes` selection.
     fn material_theme(&self) -> MaterialThemes;
 }
 
 /// Defines where a pages can come from.
 pub trait PageProvider {
+    /// The name of the current page.
     fn page_name(&self) -> &str;
+    /// The name for the icon from `iced_font_awesome` of the current page.
     fn page_icon(&self) -> &str;
-    fn page_accent(&self) -> MaterialColors;
 }
 
 // modes

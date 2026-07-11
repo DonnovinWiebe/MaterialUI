@@ -1805,7 +1805,7 @@ dependencies = [
 
 [[package]]
 name = "materialui"
-version = "1.0.0"
+version = "2.0.0"
 dependencies = [
  "iced",
  "iced_font_awesome",
