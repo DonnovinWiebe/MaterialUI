@@ -6,7 +6,7 @@ use iced::widget::button;
 use iced::widget::text_editor::{Content, Action};
 use iced_font_awesome::fa_icon_solid as icon;
 
-use crate::material::{Depths, MaterialColors, MaterialStyle, MaterialThemes, Materials};
+use crate::materials::{Depths, MaterialColors, MaterialStyle, MaterialThemes, Materials};
 
 // traits
 /// Defines where a theme can come from.
@@ -798,7 +798,9 @@ pub fn navigation_panel<'a, Signal: Clone + 'a>(
 /// A button that navigates to a specific page.
 #[must_use]
 pub fn page_pointer<'a, Signal: Clone + 'a>(
-    app: &'a (impl ThemeProvider + PageProvider),
+    app: &'a impl ThemeProvider,
+    page_name: &str,
+    page_icon: &str,
     is_selected: bool,
     on_press: Signal,
     is_active: bool,
@@ -811,8 +813,8 @@ pub fn page_pointer<'a, Signal: Clone + 'a>(
         MaterialStyle { material: Materials::Plastic, color, depth: Depths::Proud, },
         ButtonShapes::Wide,
         row![
-            icon(app.page_icon()),
-            ui_string(app, app.page_name(), TextSizes::Interactable, MaterialColors::StrongText),
+            icon(page_icon),
+            ui_string(app, page_name, TextSizes::Interactable, MaterialColors::StrongText),
         ]
         .spacing(Spacing::Large.size()),
         on_press,
