@@ -18,9 +18,9 @@ pub trait ThemeProvider {
 /// Defines where a pages can come from.
 pub trait PageProvider {
     /// The name of the current page.
-    fn page_name(&self) -> &str;
+    fn page_name(&self) -> String;
     /// The name for the icon from `iced_font_awesome` of the current page.
-    fn page_icon(&self) -> &str;
+    fn page_icon(&self) -> String;
 }
 
 // modes
